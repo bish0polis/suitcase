@@ -23,8 +23,8 @@ part / --size 1 --grow --fstype ext4 --label _/
 
 # Repositories
 # The CentOS repos below will always end up with the latest minor version.
-repo --cost=1000 --name=CentOS6-Base --mirrorlist=http://mirrorlist.centos.org/?release=6.6&arch=x86_64&repo=os
-repo --cost=1000 --name=CentOS6-Updates --mirrorlist=http://mirrorlist.centos.org/?release=6.6&arch=x86_64&repo=updates
+repo --cost=1000 --name=CentOS6-Base --baseurl=http://centos.mirrors.tds.net/pub/linux/centos/6/os/x86_64/
+repo --cost=1000 --name=CentOS6-Updates --baseurl=http://centos.mirrors.tds.net/pub/linux/centos/6/updates/x86_64/
 
 repo --cost=1000 --name=EPEL --baseurl=http://dl.fedoraproject.org/pub/epel/6/x86_64/
 repo --cost=1 --name=Puppetlabs --baseurl=http://yum.puppetlabs.com/el/6/products/x86_64/

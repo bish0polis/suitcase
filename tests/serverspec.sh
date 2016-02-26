@@ -1,6 +1,6 @@
 #!/bin/sh -x
 echo "Performing spec tests."
-sudo gem install bundler --no-ri --no-rdoc
+gem install bundler --no-ri --no-rdoc
 cd /tmp/tests
 bundle install --path=vendor
 
