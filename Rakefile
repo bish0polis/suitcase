@@ -20,7 +20,7 @@ S3_AWS_PV  = "#{S3_BUCKET}/aws-pv"
 if RUBY_PLATFORM =~ /.*darwin.*/
   packer_cmd = '/usr/local/bin/packer'
 else
-  packer_cmd = '~/bin/packer'
+  packer_cmd = '/usr/bin/packer'
 end
 
 $command = { 'packer' => packer_cmd }
