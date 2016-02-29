@@ -1,0 +1,113 @@
+{
+  "variables":
+  {
+    "vm_name"           : "",
+    "timestamp"         : "{{ timestamp }}",
+    "os_version"        : "",
+    "ks"                : "",
+    "headless"          : "",
+    "iso_url"           : "",
+    "iso_checksum"      : "",
+    "iso_checksum_type" : "",
+    "vmw_network"	: "V_devlab",
+    "vmw_vol_cache"	: "DEV-Infra1",
+    "vmw_esxHost"	: "dev-esx-build1.dev.thinkingphones.net",
+    "vmw_pass"		: "{{env `vmw_pass`}}",
+    "vmw_user"		: "packer",
+    "user"              : ""
+  },
+
+  "builders":
+  [
+    {
+      "type"                 : "vmware-iso",
+      "boot_command":
+      [
+        "<tab>",
+	" text noverifyssl ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks/{{user `ks`}}",
+        "<enter>",
+        "<wait>"
+      ],
+      "boot_wait"            : "30s",
+      "http_directory"       : ".",
+      "guest_os_type"        : "rhel6-64",
+      "disk_size"            : "30000",
+      "disk_type_id": "thin",
+      "format": "ovf",
+      "http_port_max": "8499",
+      "http_port_min": "8400",
+      "headless"             : "{{user `headless`}}",
+      "iso_url"              : "{{user `iso_url`}}",
+      "iso_checksum"         : "{{user `iso_checksum`}}",
+      "iso_checksum_type"    : "{{user `iso_checksum_type`}}",
+      "output_directory"     : "images/master/{{user `vm_name`}}-{{user `timestamp`}}",
+      "remote_cache_datastore": "{{user `vmw_vol_cache`}}",
+      "remote_datastore": "{{user `vmw_vol_cache`}}",
+      "remote_host": "{{user `vmw_esxHost`}}",
+      "remote_password": "{{user `vmw_pass`}}",
+      "remote_type": "esx5",
+      "remote_username": "{{user `vmw_user`}}",
+      "ssh_username"         : "root",
+      "ssh_private_key_file" : "files/hsimage_root_rsa",
+      "ssh_wait_timeout"     : "30m",
+      "shutdown_timeout"     : "15s",
+      "shutdown_command"     : "echo {{user `ssh_pass`}} | sudo -S shutdown -P now",
+      "vm_name"              : "{{user `vm_name`}}",
+      "vmdk_name": "{{user `vm_name`}}",
+      "vmx_data": {
+        "cpuid.coresPerSocket"     : "1",
+        "ethernet0.networkName"    : "{{user `vmw_network`}}",
+        "ethernet0.present"        : "TRUE",
+        "ethernet0.startConnected" : "TRUE",
+        "ethernet0.virtualDev"     : "vmxnet3",
+        "memsize"                  : "1024",
+        "numvcpus"                 : "2"
+      },
+      "vmx_data_post": {
+        "memsize": "512",
+	"ethernet0.present": "FALSE",
+	"ide1:0.clientDevice": "TRUE",
+	"ide1:0.deviceType": "cdrom-raw",
+	"ide1:0.fileName": "emptyBackingString",
+	"ide1:0.present": "TRUE",
+	"ide1:0.startConnected": "FALSE"
+      }
+    }
+  ],
+
+  "provisioners":
+  [
+    {
+      "type"             : "shell",
+      "environment_vars" :
+      [
+        "vm_name={{user `vm_name`}}",
+        "kickstart={{user `ks`}}",
+        "os_version={{user `os_version`}}"
+      ],
+      "scripts" :
+      [
+        "scripts/common/pre-state.sh",
+        "scripts/virtualbox/cloud-init-config.sh",
+        "scripts/virtualbox/dns.sh",
+        "scripts/virtualbox/grub.sh",
+        "scripts/virtualbox/motd_version.sh",
+        "scripts/virtualbox/nscd.sh",
+        "scripts/virtualbox/rpmgpg.sh",
+        "scripts/virtualbox/packages.sh",
+        "scripts/virtualbox/serial.sh",
+        "scripts/virtualbox/sshd.sh",
+        "scripts/common/nic.sh"
+      ]
+    },
+    {
+      "type"       : "file",
+      "source"     : "tests",
+      "destination": "/tmp"
+    },
+    {
+      "type"   : "shell",
+      "script" : "tests/serverspec.sh"
+    }
+  ]
+}
