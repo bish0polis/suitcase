@@ -1,21 +1,25 @@
 # Kickstart file to build base CentOS 6 image
+install
+cdrom
 
 # CentOS-6-x86_64
 lang en_US.UTF-8
 keyboard us
-timezone --utc UTC
-auth --useshadow --enablemd5
+timezone --utc America/New_York
+authconfig --enableshadow --passalgo=sha512
+auth  --useshadow  --enablemd5
 selinux --disabled
-firewall --disabled
+firewall --enabled --service=ssh
 firstboot --disable
 text
+skipx
 reboot
 
 # openssl passwd -1 -salt $(date +%Y%m%d) 'frblah'
 rootpw --lock --iscrypted $1$20160229$qm2af/ZzFxosV7B2ABLQw/
 
 bootloader --location=mbr --timeout=1
-network --bootproto=dhcp --device=eth0 --activate --onboot=on
+network --bootproto=dhcp --device=eth0 --activate --onboot=on --noipv6
 
 zerombr
 clearpart --all
