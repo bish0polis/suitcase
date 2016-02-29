@@ -1,6 +1,6 @@
 # Kickstart file to build base CentOS 6 image
 
-# CentOS-6.6-x86_64
+# CentOS-6-x86_64
 lang en_US.UTF-8
 keyboard us
 timezone --utc UTC
@@ -11,7 +11,8 @@ firstboot --disable
 text
 reboot
 
-rootpw --lock --iscrypted $1$0000000000000000000000000000000
+# openssl passwd -1 -salt $(date +%Y%m%d) 'frblah'
+rootpw --lock --iscrypted $1$20160229$qm2af/ZzFxosV7B2ABLQw/
 
 bootloader --location=mbr --timeout=1
 network --bootproto=dhcp --device=eth0 --activate --onboot=on
@@ -27,62 +28,75 @@ repo --cost=1000 --name=CentOS6-Base --mirrorlist=http://mirrorlist.centos.org/?
 repo --cost=1000 --name=CentOS6-Updates --mirrorlist=http://mirrorlist.centos.org/?release=6.6&arch=x86_64&repo=updates
 
 repo --cost=1000 --name=EPEL --baseurl=http://dl.fedoraproject.org/pub/epel/6/x86_64/
-repo --cost=1 --name=Puppetlabs --baseurl=http://yum.puppetlabs.com/el/6/products/x86_64/
-repo --cost=1 --name=Puppet-deps --baseurl=http://yum.puppetlabs.com/el/6/dependencies/x86_64/
+#repo --cost=1 --name=Puppetlabs --baseurl=http://yum.puppetlabs.com/el/6/products/x86_64/
+#repo --cost=1 --name=Puppet-deps --baseurl=http://yum.puppetlabs.com/el/6/dependencies/x86_64/
 
 # Add all the packages after the base packages
-%packages
+%packages --ignoremissing --excludedocs --nobase
 @core
-@base
+wget
+sudo
+-*-firmware
 ack
 dos2unix
 dstat
+
+# pre-gaming the chef run
+ca-certificates
+diffutils
+eject
+emacs-nox
 git
+krb5-workstation
+lynx
+nagios-nsca-client
+ngrep
+openldap-clients
+ruby
+rubygems
+screen
+sssd
+sssd-tools
+subversion
+subversion-devel
+subversion-perl
+telnet
+tmux
+wireshark
+xinetd
+
+# residuals from upstream suitcase setup
 htop
 iftop
-lynx
 nc
 nscd
 # Use sssd eventually
 nss-pam-ldapd
-openldap-clients
 rsync
 s3cmd
-screen
-tmux
 yum-utils
 yum-plugin-changelog
 yum-plugin-downloadonly
 yum-plugin-ps
 
 redhat-lsb
-
-# Use standard NTP.
-# FIXME: we have no NTP resource in Puppet which seems like a bad idea to me...
 ntp
 
 # Install kernel related packages. Used for VBox Guest Additions.  Not sure
 # if elsewhere.
 kernel-devel
 kernel-headers
+gcc
+make
+autoconf
+dkms
 
 # cloud-init
 cloud-init
 
-# Puppet
-# We use our own mirror during cloud-init but we need the key from this
-# package.
-puppetlabs-release
-facter-2.3.0-1.el6
-puppet-3.7.3-1.el6
-
-
 # This could be removed but would need a Puppet update to get keys from the
 # internet.
 epel-release
-
-# needed for Virtual Box.
-gcc
 
 #NOTE: abrt may be worthwhile for kernel panics if we invest some time into
 # learning and using it.
