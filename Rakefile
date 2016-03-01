@@ -9,7 +9,9 @@ VG_DIR      = 'images/vagrant'
 
 AWS_HVM_TMPL = 'image-templates/aws-hvm.json'
 AWS_PV_TMPL  = 'image-templates/aws-paravirt.json'
-MASTER_TMPL  = 'image-templates/virtualbox.json'
+#MASTER_TMPL  = 'image-templates/virtualbox.json'
+MASTER_TMPL  = 'image-templates/vmware-iso.json'
+
 VAGRANT_TMPL = 'image-templates/vagrant.json'
 
 S3_MASTER  = "#{S3_BUCKET}/master"

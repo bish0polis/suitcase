@@ -9,11 +9,12 @@
     "iso_url"           : "",
     "iso_checksum"      : "",
     "iso_checksum_type" : "",
-    "vmw_network"	: "V_devlab",
-    "vmw_vol_cache"	: "DEV-Infra1",
-    "vmw_esxHost"	: "dev-esx-build1.dev.thinkingphones.net",
+
+    "vmw_network"	: "{{env `vmw_network`}}",
+    "vmw_vol_cache"	: "{{env `vmw_vol_cache`}}",
+    "vmw_esxHost"	: "{{env `vmw_esxHost`}}",
     "vmw_pass"		: "{{env `vmw_pass`}}",
-    "vmw_user"		: "packer",
+    "vmw_user"		: "{{env `vmw_user`}}",
     "user"              : ""
   },
 
